@@ -341,6 +341,7 @@ test('tray selection switches pets and the global shortcut respects manual visib
   await expect(settingsPage.locator('h1')).toHaveText('Miso');
   await settingsPage.locator('#shortcut').check({force:true});
   await expect(settingsPage.locator('#shortcut-description')).toContainText(process.platform==='darwin'?'⌘⇧P':'Ctrl+Shift+P');
+  await expect.poll(()=>application.evaluate(()=>typeof globalThis.testShortcut)).toBe('function');
   await application.evaluate(()=>globalThis.testShortcut());
   await expect.poll(()=>settingsPage.evaluate(async()=>(await window.pedex.getState()).settings.visible)).toBe(false);
   await application.evaluate(()=>globalThis.testShortcut());
