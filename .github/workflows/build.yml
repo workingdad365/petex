@@ -1,4 +1,4 @@
-name: Windows x64 release
+name: Desktop packages
 on:
   push:
     branches: [master]
@@ -13,9 +13,23 @@ concurrency:
   cancel-in-progress: true
 jobs:
   package:
-    name: Build and test Windows x64
+    name: ${{ matrix.name }}
     timeout-minutes: 25
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS Apple Silicon
+            os: macos-15
+            target: mac
+            platform: darwin
+            arch: arm64
+          - name: Windows x64
+            os: windows-latest
+            target: win
+            platform: win32
+            arch: x64
+    runs-on: ${{ matrix.os }}
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
     steps:
@@ -34,25 +48,33 @@ jobs:
         run: npm run check
       - name: Test desktop interactions
         run: npm run test:desktop
-      - name: Build the Windows x64 installer
+      - name: Build installers
         env:
-          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-        run: npm run dist:win
+          MAC_CSC_LINK: ${{ matrix.target == 'mac' && secrets.MAC_CSC_LINK || '' }}
+          MAC_CSC_KEY_PASSWORD: ${{ matrix.target == 'mac' && secrets.MAC_CSC_KEY_PASSWORD || '' }}
+          APPLE_API_KEY_CONTENT: ${{ matrix.target == 'mac' && secrets.APPLE_API_KEY_CONTENT || '' }}
+          APPLE_API_KEY_ID: ${{ matrix.target == 'mac' && secrets.APPLE_API_KEY_ID || '' }}
+          APPLE_API_ISSUER: ${{ matrix.target == 'mac' && secrets.APPLE_API_ISSUER || '' }}
+          WIN_CSC_LINK: ${{ matrix.target == 'win' && secrets.WIN_CSC_LINK || '' }}
+          WIN_CSC_KEY_PASSWORD: ${{ matrix.target == 'win' && secrets.WIN_CSC_KEY_PASSWORD || '' }}
+        run: npm run dist:${{ matrix.target }} -- --${{ matrix.arch }}
       - name: Verify and test the packaged app
-        run: npm run test:packaged -- win32 x64
-      - name: Upload installer
+        run: npm run test:packaged -- ${{ matrix.platform }} ${{ matrix.arch }}
+      - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
-          name: Petex-win32-x64
-          path: release/Petex-*-win-x64.exe
+          name: Petex-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
           if-no-files-found: error
           retention-days: 14
       - name: Upload test diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: diagnostics-win32-x64
+          name: diagnostics-${{ matrix.platform }}-${{ matrix.arch }}
           path: test-results/
           if-no-files-found: ignore
           retention-days: 7
@@ -72,8 +94,9 @@ jobs:
           node-version: 22
       - uses: actions/download-artifact@v4
         with:
-          name: Petex-win32-x64
+          pattern: Petex-*
           path: release
+          merge-multiple: true
       - name: Set version from commit height
         run: node scripts/version.cjs
       - name: Publish this version once

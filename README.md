@@ -85,9 +85,9 @@ npm run dist:win
 npm run test:packaged
 ```
 
-This fork publishes Windows x64 installers on [GitHub Releases](https://github.com/workingdad365/petex/releases/latest). A local `npm run dist:win` build writes the NSIS installer to `release/`.
+This fork publishes Windows x64 and Apple Silicon (macOS arm64) packages on [GitHub Releases](https://github.com/workingdad365/petex/releases/latest). Build locally with `npm run dist:win` on Windows or `npm run dist:mac -- --arm64` on an Apple Silicon Mac.
 
-The [Windows x64 release workflow](https://github.com/workingdad365/petex/actions/workflows/build.yml) runs on pushes to `master`, version tags, pull requests and manual dispatch. It runs the unit and desktop tests, builds the installer, verifies the packaged source and native libraries, and runs the desktop tests against the packaged executable. Successful pushes to `master` or a matching version tag publish the `.exe` and `SHA256SUMS.txt`.
+The [release workflow](https://github.com/workingdad365/petex/actions/workflows/build.yml) tests both platforms before and after packaging. Successful pushes to `master` or a matching version tag publish the Windows `.exe`, macOS arm64 `.dmg` and `.zip`, and `SHA256SUMS.txt`.
 
 Versions use major.minor.commit-height: edit the first two numbers in package.json manually; CI replaces the third with `git rev-list --count HEAD` using full history. Run `npm run version:ci` for the same version locally. Existing published versions are left unchanged.
 
