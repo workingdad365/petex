@@ -151,7 +151,7 @@ class DesktopPets {
   pressStart(p) {if(!this.active(p))return;this.cancelSocial();p.walking=null;p.drag=new DragTracker(screen.getCursorScreenPoint(),p.win.getBounds(),performance.now());p.win.setIgnoreMouseEvents(false);this.schedule();}
   pressEnd(p) {
     if(p.drag){const wasDragging=p.drag.dragging;p.drag=null;const bounds=p.win.getBounds();const position=wasDragging&&this.getState().settings.snapEdges?snapPosition(bounds,this.area(p)):clamp(bounds,this.area(p));p.win.setPosition(position.x,position.y);this.remember(p);}
-    p.busyUntil=performance.now()+3000;this.refresh();this.onSave();
+    p.busyUntil=performance.now()+3000;this.refresh();return this.onSave();
   }
   moveToDisplay(p,displayId) {
     if(this.disposed||!p||p.win.isDestroyed()||this.instances.get(p.id)!==p)return false;

@@ -197,7 +197,8 @@ test('native dragging crosses displays, saves the destination and reset returns 
   await application.evaluate((_electron,x)=>{globalThis.testCursor.x=x;},destination.x+1);
   await expect.poll(()=>application.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().find(w=>w.getTitle()==='Petex pet').getBounds().x)).toBe(destination.x);
   await petPage.evaluate(()=>window.pedex.pressEnd());
-  await expect.poll(async()=>JSON.parse(await fs.readFile(path.join(root,'data','settings.json'),'utf8')).placements?.primary?.displayId).toBe('102');
+  const saved=JSON.parse(await fs.readFile(path.join(root,'data','settings.json'),'utf8'));
+  expect(saved.placements.primary?.displayId).toBe('102');
   await settingsPage.evaluate(()=>window.pedex.updateSettings({size:144}));
   let state=await settingsPage.evaluate(()=>window.pedex.getState());
   expect(state.instances[0].bounds.x).toBe(destination.x);

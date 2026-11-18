@@ -245,7 +245,7 @@ function configureIPC() {
   handler('pets:open-folder',settingsOnly,async()=>{const error=await shell.openPath(library.petsPath);if(error)throw new Error(error);});
   handler('pet:menu',petWindows,function(){petMenu(desktop.fromWindow(this));});
   handler('pet:press-start',petWindows,function(){desktop.pressStart(desktop.fromWindow(this));});
-  handler('pet:press-end',petWindows,function(){desktop.pressEnd(desktop.fromWindow(this));});
+  handler('pet:press-end',petWindows,function(){return desktop.pressEnd(desktop.fromWindow(this));});
   handler('pet:hit',petWindows,function(hit){desktop.hit(desktop.fromWindow(this),hit);});
   handler('pet:stroke',petWindows,function(){return desktop.petting(desktop.fromWindow(this));});
   handler('companions:add',settingsOnly,id=>enqueue(async()=>{
