@@ -58,6 +58,19 @@ test('renders the native companion, settings, and working controls',async()=>{
   await application.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().find(w=>w.getTitle()==='Petex').setContentSize(600,620));
   expect(await settingsPage.locator('#done').evaluate(node=>node.getBoundingClientRect().bottom<=innerHeight)).toBe(true);
 });
+test('refresh pet windows replaces native windows and preserves placement and visibility',async()=>{
+  await extras({multiPet:true});await addMiso();
+  await settingsPage.evaluate(()=>window.pedex.updateSettings({primaryVisible:false,motion:false}));
+  const windows=()=>application.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()
+    .filter(w=>w.getTitle().startsWith('Petex pet')).sort((a,b)=>a.id-b.id)
+    .map(w=>({id:w.id,bounds:w.getBounds(),visible:w.isVisible()})));
+  const before=await windows();
+  expect(before.map(w=>w.visible)).toEqual([false,true]);
+  const button=settingsPage.locator('#refresh-pets');await button.click();
+  await expect.poll(async()=>(await windows()).filter(w=>!before.some(old=>old.id===w.id)).length).toBe(2);
+  await expect(button).toBeEnabled();
+  expect((await windows()).map(({bounds,visible})=>({bounds,visible}))).toEqual(before.map(({bounds,visible})=>({bounds,visible})));
+});
 test('discovers real-format Codex pets, deduplicates and persists selection',async()=>{
   await settingsPage.getByRole('button',{name:'Import from Codex'}).click();
   await expect(settingsPage.getByRole('button',{name:'Choose Sunny test pet'})).toHaveAttribute('aria-pressed','true');
@@ -293,10 +306,14 @@ test('Store mode hides and blocks Codex imports while retaining file imports',as
 test('changes every app language and translates native menus and import errors',async()=>{
   const {messages}=require('../../app/locales.js');
   await application.evaluate(({Menu})=>{const original=Menu.buildFromTemplate;Menu.buildFromTemplate=function(template){const menu=original.call(this,template);if(template[0]?.label?.startsWith('Petex ·'))globalThis.testTray=menu;return menu;};});
-  for(const language of ['zh-Hans','zh-Hant','ja','es','fr','en-GB']){
+  for(const language of Object.keys(messages)){
     await settingsPage.locator('#language').selectOption(language);
     await expect(settingsPage.locator('#done')).toHaveText(messages[language].done);
     await expect(settingsPage.locator('#behaviour option[value="calm"]')).toHaveText(messages[language].calm);
+    for(const control of await settingsPage.locator('.preferences-grid input, .preferences-grid select, #refresh-pets').all()){
+      const key='tip-'+(await control.getAttribute('id')).replace(/^feature-/,'');
+      expect(await control.evaluate(el=>(el.closest('.setting')||el).title)).toBe(messages[language][key]);
+    }
     await expect(settingsPage.locator('#play')).toHaveText(messages[language].play);
     const fits=await settingsPage.locator('#done').evaluate(node=>node.getBoundingClientRect().bottom<=innerHeight);
     expect(fits).toBe(true);

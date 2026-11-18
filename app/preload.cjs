@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('pedex', {
   removePet: id => invoke('pets:remove', id),
   exportPets: kind => invoke('pets:export', kind),
   home: () => invoke('pet:home'),
+  refreshPets: () => invoke('pet:refresh'),
   playAnimation: name => invoke('pet:play', name),
   openRepository: () => invoke('repository:open'),
   openPetsFolder: () => invoke('pets:open-folder'),

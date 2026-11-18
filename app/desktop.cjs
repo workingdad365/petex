@@ -191,6 +191,18 @@ class DesktopPets {
     if(settings.features.interactions&&now>=this.nextSocial){this.socialPlan();this.nextSocial=now+25000+Math.random()*35000;}
   }
   reset() {const {settings}=this.getState();settings.position=null;settings.primaryVisible=true;settings.placements={};for(const item of settings.companions){item.position=null;item.visible=true;}this.apply();}
+  async recreateWindows() {
+    this.cancelSocial();
+    this.closeToy();
+    for(const p of this.instances.values()){
+      this.remember(p,false);
+      p.win.destroy();
+    }
+    this.instances.clear();
+    this.create('primary');
+    this.apply();
+    await Promise.all([...this.instances.values()].map(p=>p.ready));
+  }
   throwBall() {
     const {settings}=this.getState(),host=[...this.instances.values()].find(p=>this.active(p));if(!settings.features.toys||!settings.motion||!host)return false;
     this.cancelSocial();this.closeToy();const pet=host.win.getBounds(),area=this.area(host),width=32;

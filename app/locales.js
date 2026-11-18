@@ -1,6 +1,48 @@
 // Shared translations for sandboxed renderers and the main process.
 (function (root) {
   const messages = {
+  ko: {
+    settings:'설정...', pets:'펫 목록', settingsHeading:'설정', play:'재생', delete:'삭제', export:'내보내기...',
+    exportPet:'펫 내보내기...', backup:'라이브러리 백업...', builtins:'내장 펫', discover:'Codex에서 가져오기',
+    dropFolder:'펫 폴더를 여기에 놓거나', importFile:'파일 가져오기', importFolder:'폴더 가져오기', importFolderLabel:'펫 폴더 가져오기',
+    size:'크기', alwaysOnTop:'항상 위에 표시', animations:'애니메이션', behaviour:'행동 성향', quiet:'조용함', calm:'차분함', playful:'활발함',
+    followCursor:'커서 바라보기', login:'로그인할 때 실행', showPet:'펫 표시', hidePet:'펫 숨기기', hideFullscreen:'전체 화면에서 숨기기',
+    snapEdges:'가장자리에 맞추기', language:'언어', automatic:'시스템 언어', shortcut:'표시/숨기기 단축키',
+    shortcutBusy:'다른 앱이 이 단축키를 사용하고 있습니다.', fullscreenUnavailable:'전체 화면을 감지할 수 없습니다.',
+    reset:'위치 초기화', resetTray:'펫 위치 초기화', refreshPets:'펫 창 새로 고침', moveToDisplay:'다른 모니터로 이동',
+    folder:'폴더 열기', folderTitle:'가져온 펫을 보관하는 폴더를 엽니다.', done:'완료', drop:'여기에 놓아 가져오기',
+    selectedPet:'선택한 펫', preview:'선택한 펫 미리 보기', choosePet:'펫 선택', chooseNamed:'{name} 선택',
+    visible:'바탕 화면에 표시 중', hidden:'숨김', paused:'애니메이션 일시 정지', fullscreenHidden:'전체 화면 사용 중에는 숨김',
+    sleeping:'화면이 잠긴 동안 일시 정지', installedOnly:'설치된 앱에서만 사용할 수 있습니다.', unsupportedGaze:'이 펫은 커서를 바라볼 수 없습니다.',
+    removeHint:'{name}: 마우스 오른쪽 버튼을 눌러 삭제', unreadable:'이미지를 읽을 수 없습니다.', imported:'펫 {count}마리를 가져왔습니다.',
+    added:'{count}마리를 추가했습니다. ', duplicate:'이미 가져온 펫입니다.', noCustom:'Codex에서 사용자 지정 펫을 찾지 못했습니다.',
+    resetDone:'위치를 초기화했습니다.', exported:'내보낸 파일을 저장했습니다.', wave:'손 흔들기', jump:'점프', sad:'슬퍼하기', wait:'기다리기',
+    work:'일하기', look:'살펴보기', left:'왼쪽으로 걷기', right:'오른쪽으로 걷기', quit:'Petex 종료',
+    pauseTray:'애니메이션 일시 정지', resumeTray:'애니메이션 재개', selectPet:'펫 선택', removeTitle:'{name} 삭제',
+    removeDetail:'Petex에 가져온 사본만 삭제합니다. Codex에 있는 원본은 그대로 남습니다.', keep:'펫 유지', remove:'삭제',
+    folderPicker:'Codex 펫 폴더 선택', filePicker:'펫 가져오기', petFiles:'펫 파일', appPicker:'설치된 ChatGPT 또는 Codex 앱 선택',
+    exportTitle:'{name} 내보내기', backupTitle:'펫 라이브러리 백업', zipFiles:'ZIP 파일', startError:'Petex를 시작하지 못했습니다.',
+    genericError:'오류가 발생했습니다. 다시 시도해 주세요.', fileError:'파일을 열 수 없습니다. 위치와 접근 권한을 확인해 주세요.',
+    imageDecode:'스프라이트 이미지를 읽을 수 없습니다. 다른 펫을 가져와 주세요.', unsafePath:'펫에 안전하지 않은 파일 경로가 있습니다.',
+    manifestLarge:'pet.json 파일이 너무 큽니다.', manifestJson:'pet.json 파일이 올바른 JSON 형식이 아닙니다.',
+    manifestObject:'pet.json에는 펫 객체가 있어야 합니다.', spriteVersion:'지원하지 않는 스프라이트 버전입니다. 버전 1과 2만 사용할 수 있습니다.',
+    imageLarge:'스프라이트 시트는 32 MB보다 작아야 합니다.', imageReadable:'스프라이트 시트를 PNG 또는 WebP 이미지로 읽을 수 없습니다.',
+    imageFormat:'PNG 또는 WebP 형식의 스프라이트 시트를 사용해 주세요.', imageDimensions:'이 펫에는 1536 x {height} 크기의 스프라이트 시트(8열 x {rows}행)가 필요합니다.',
+    staticImage:'움직이는 이미지 대신 정지된 스프라이트 시트를 사용해 주세요.', imageDamaged:'스프라이트 시트가 손상되어 읽을 수 없습니다.',
+    regularFile:'선택한 파일이 너무 크거나 일반 파일이 아닙니다.', imageInside:'스프라이트 시트는 펫 폴더 안에 있어야 합니다.',
+    tooManyFiles:'압축 파일에 항목이 너무 많습니다. 펫을 한 마리씩 가져와 주세요.', oneManifest:'ZIP에는 pet.json 파일이 하나만 있어야 합니다.',
+    missingSprite:'ZIP에 스프라이트 시트가 없거나 중복된 파일이 있습니다.', selectedImage:'선택한 이미지를 읽을 수 없습니다.',
+    chooseFile:'펫 폴더, pet.json, ZIP 또는 PNG/WebP 스프라이트 시트를 선택해 주세요.', cannotRemove:'이 펫은 삭제할 수 없습니다.',
+    codexRestricted:'Codex에서 가져오기는 GitHub 배포판에서 사용할 수 있습니다.', chooseApp:'ChatGPT나 Codex 앱, 설치 폴더 또는 app.asar를 선택해 주세요.',
+    invalidArchive:'올바른 앱 압축 파일이 아닙니다.', incompleteArchive:'앱 압축 파일이 불완전합니다.', noBuiltins:'이 앱에서 호환되는 내장 펫을 찾지 못했습니다.',
+    invalidSettings:'설정값이 올바르지 않습니다.', petMissing:'이 펫은 더 이상 목록에 없습니다.', loginInstalled:'로그인 시 자동 실행은 설치된 앱에서만 사용할 수 있습니다.',
+    dropError:'펫 폴더나 파일을 놓아 주세요.', unsupportedAnimation:'지원하지 않는 애니메이션입니다.', untrusted:'신뢰할 수 없는 요청입니다.',
+    builtinExport:'Miso는 Petex에 포함되어 있어 내보낼 필요가 없습니다.', backupEmpty:'라이브러리를 백업하려면 먼저 펫을 가져와 주세요.',
+    backupLarge:'라이브러리가 너무 커서 하나의 ZIP으로 내보낼 수 없습니다. 펫을 개별적으로 내보내 주세요.', backupInvalid:'올바른 Petex 라이브러리 백업이 아닙니다.',
+    walkError:'지금은 펫이 이 방향으로 걸을 수 없습니다.', exportKind:'내보낼 펫이나 라이브러리를 선택해 주세요.', exportInside:'펫 라이브러리 폴더 밖에 저장해 주세요.',
+    edit:'편집', undo:'실행 취소', redo:'다시 실행', cut:'잘라내기', copy:'복사', paste:'붙여넣기', selectAll:'모두 선택',
+    petInstructions:'펫을 끌어서 옮길 수 있습니다. 클릭하면 손을 흔들고 길게 누르면 점프합니다. 마우스 오른쪽 버튼을 누르면 메뉴가 열립니다.'
+  },
   "en-GB": {
     "settings": "Settings…",
     "pets": "Pets",
@@ -36,6 +78,7 @@
     "fullscreenUnavailable": "Fullscreen detection is unavailable",
     "reset": "Reset position",
     "resetTray": "Reset pet position",
+    "refreshPets": "Refresh pet windows",
     "moveToDisplay": "Move to display",
     "folder": "Open folder",
     "folderTitle": "Open the imported pets folder",
@@ -168,6 +211,7 @@
     "fullscreenUnavailable": "无法检测全屏状态",
     "reset": "重置位置",
     "resetTray": "重置宠物位置",
+    "refreshPets": "刷新宠物窗口",
     "moveToDisplay": "移至显示器",
     "folder": "打开文件夹",
     "folderTitle": "打开已导入宠物的文件夹",
@@ -300,6 +344,7 @@
     "fullscreenUnavailable": "無法偵測全螢幕狀態",
     "reset": "重設位置",
     "resetTray": "重設寵物位置",
+    "refreshPets": "重新整理寵物視窗",
     "moveToDisplay": "移至顯示器",
     "folder": "開啟資料夾",
     "folderTitle": "開啟已匯入寵物的資料夾",
@@ -432,6 +477,7 @@
     "fullscreenUnavailable": "全画面表示を検出できません",
     "reset": "位置をリセット",
     "resetTray": "ペットの位置をリセット",
+    "refreshPets": "ペットのウィンドウを再作成",
     "moveToDisplay": "別のディスプレイに移動",
     "folder": "フォルダを開く",
     "folderTitle": "読み込んだペットの保存先を開く",
@@ -564,6 +610,7 @@
     "fullscreenUnavailable": "Detección de pantalla completa no disponible",
     "reset": "Restablecer posición",
     "resetTray": "Restablecer posición de la mascota",
+    "refreshPets": "Actualizar ventanas de mascotas",
     "moveToDisplay": "Mover a otra pantalla",
     "folder": "Abrir carpeta",
     "folderTitle": "Abrir la carpeta de mascotas importadas",
@@ -696,6 +743,7 @@
     "fullscreenUnavailable": "Détection du plein écran indisponible",
     "reset": "Réinitialiser la position",
     "resetTray": "Réinitialiser la position de l’animal",
+    "refreshPets": "Actualiser les fenêtres des animaux",
     "moveToDisplay": "Déplacer vers un écran",
     "folder": "Ouvrir le dossier",
     "folderTitle": "Ouvrir le dossier des animaux importés",
@@ -795,6 +843,17 @@
   }
 };
   const extraMessages = {
+  ko: {
+    more:'추가 기능', extrasHint:'사용할 기능을 켜 주세요.', extrasOff:'추가 기능 모두 끄기', multiPet:'여러 펫 표시', interactions:'펫끼리 교류',
+    personalities:'펫별 설정', roaming:'활동 영역', toys:'장난감', petting:'쓰다듬기', routines:'하루 일과', layouts:'저장된 배치', libraryTools:'라이브러리 관리',
+    companions:'바탕 화면의 펫', addPet:'펫 추가', dismissPet:'바탕 화면에서 제외', petCount:'바탕 화면에 {count}마리 (최대 4마리)', petLimit:'바탕 화면에는 최대 4마리까지 표시할 수 있습니다.',
+    greet:'인사하기', throwBall:'공 던지기', ballHint:'공을 끌었다가 놓으면 다시 던질 수 있습니다.', pettingHint:'Shift 키를 누른 채 펫 위에서 마우스를 좌우로 움직여 주세요.',
+    display:'모니터', displayNumber:'모니터 {number}', drawArea:'영역 지정...', wholeDisplay:'모니터 전체', drawHint:'드래그해서 펫의 활동 영역을 지정해 주세요.',
+    useArea:'이 영역 사용', cancel:'취소', routineHours:'조용한 시간대 (현지 시각 기준, 0시부터 23시까지)', fromHour:'시작 시각', toHour:'종료 시각', idleMinutes:'쉬기 전 대기 시간(분)',
+    routineHint:'조용한 시간대가 되거나 설정한 시간 동안 입력이 없으면 펫이 쉽니다. 이때도 펫을 클릭하거나 끌어서 옮길 수 있습니다.',
+    layoutName:'배치 이름', saveLayout:'배치 저장', restoreLayout:'배치 불러오기', layoutSaved:'배치를 저장했습니다.', layoutLimit:'이름을 입력해 주세요. 배치는 최대 20개까지 저장할 수 있습니다.',
+    searchPets:'펫 검색', favourites:'즐겨찾기만 보기', favourite:'즐겨찾기에 추가', unfavourite:'즐겨찾기 해제', renamePet:'이름 변경'
+  },
   "en-GB": {
     "more": "More",
     "extrasHint": "Extras are off until you turn them on.",
@@ -1067,11 +1126,38 @@
   }
 };
   for(const code of Object.keys(extraMessages))Object.assign(messages[code],extraMessages[code]);
-  const languages = {'en-GB':'English (UK)', 'zh-Hans':'简体中文', 'zh-Hant':'繁體中文', ja:'日本語', es:'Español', fr:'Français'};
+  const languages = {'en-GB':'English (UK)', 'zh-Hans':'简体中文', 'zh-Hant':'繁體中文', ja:'日本語', ko:'한국어', es:'Español', fr:'Français'};
+  // Each row describes one setting in the named locale order.
+  const tipLocales=['en-GB','ko','ja','zh-Hans','zh-Hant','es','fr'];
+  const tips={
+    size:['Change the size of the desktop pet.','바탕 화면에 표시되는 펫의 크기를 조절합니다.','ペットの表示サイズを変えます。','调整桌面宠物的大小。','調整桌面寵物的大小。','Cambia el tamaño de la mascota.','Ajuste la taille de l’animal.'],
+    alwaysOnTop:['Keep pets above other windows.','다른 창을 열어도 펫이 그 위에 보입니다.','他のウィンドウの手前に表示します。','让宠物显示在其他窗口上方。','讓寵物顯示在其他視窗上方。','Muestra las mascotas sobre otras ventanas.','Garde les animaux devant les autres fenêtres.'],
+    motion:['Turn pet movements and animated actions on or off.','펫의 애니메이션을 켜거나 끕니다.','動きやアニメーションを切り替えます。','开启或暂停宠物动画。','開啟或暫停寵物動畫。','Activa o pausa las animaciones.','Active ou suspend les animations.'],
+    behaviour:['Quiet skips spontaneous actions. Calm acts every 45-120 seconds; Playful every 15-40 seconds.','펫이 스스로 행동하는 빈도를 정합니다. 조용함을 선택하면 자동 행동을 쉬고, 차분함을 선택하면 45초에서 2분마다, 활발함을 선택하면 15초에서 40초마다 행동합니다.','静かでは自発的に動かず、穏やかでは45～120秒、活発では15～40秒ごとに動きます。','安静时不主动行动；平静时每45至120秒、活泼时每15至40秒行动一次。','安靜時不主動行動；平靜時每45至120秒、活潑時每15至40秒行動一次。','Sin acciones espontáneas en modo tranquilo; los otros modos actúan cada 45-120 o 15-40 segundos.','Aucune action spontanée en mode silencieux ; les autres modes agissent toutes les 45 à 120 ou 15 à 40 secondes.'],
+    followCursor:['Supported pets look towards the pointer without walking after it.','이 기능을 지원하는 펫은 제자리에서 마우스 포인터 쪽을 바라봅니다.','対応するペットがその場でポインターを見ます。','支持此功能的宠物会原地看向指针。','支援此功能的寵物會原地看向指標。','Las mascotas compatibles miran hacia el cursor.','Les animaux compatibles regardent le pointeur.'],
+    launchAtLogin:['Start Petex when you sign in to your computer.','컴퓨터에 로그인하면 Petex를 자동으로 실행합니다.','ログイン時にPetexを起動します。','登录电脑时启动 Petex。','登入電腦時啟動 Petex。','Abre Petex al iniciar sesión.','Lance Petex à l’ouverture de session.'],
+    visible:['Show or hide all desktop pets together.','바탕 화면의 모든 펫을 한꺼번에 표시하거나 숨깁니다.','すべてのペットの表示を切り替えます。','一起显示或隐藏所有宠物。','一併顯示或隱藏所有寵物。','Muestra u oculta todas las mascotas.','Affiche ou masque tous les animaux.'],
+    'refresh-pets':['Recreate pet windows at their current positions if a pet disappears.','펫이 보이지 않을 때 현재 위치에 펫 창을 새로 만듭니다.','ペットが消えたときに同じ位置でウィンドウを作り直します。','宠物消失时，在原位重建宠物窗口。','寵物消失時，在原位重建寵物視窗。','Recrea las ventanas en su posición si desaparece una mascota.','Recrée les fenêtres à leur place si un animal disparaît.'],
+    hideFullscreen:['Hide pets on a display while another app uses it in fullscreen.','다른 앱이 전체 화면을 사용하는 모니터에서만 펫을 숨깁니다.','全画面表示中のディスプレイだけペットを隠します。','仅在全屏应用所在的显示器上隐藏宠物。','僅在全螢幕應用程式所在的顯示器上隱藏寵物。','Oculta las mascotas en la pantalla ocupada por una aplicación a pantalla completa.','Masque les animaux sur l’écran utilisé en plein écran.'],
+    snapEdges:['Drop a pet near an edge of its roaming area to align it with that edge.','펫을 끌어서 활동 영역의 가장자리 가까이에 놓으면 그 가장자리에 맞춰 정렬합니다.','ペットを移動範囲の端近くで放すと端に揃えます。','在活动范围边缘附近松开宠物即可贴边。','在活動範圍邊緣附近放開寵物即可貼齊邊緣。','Suelta la mascota cerca de un borde de su zona para alinearla.','Aligne l’animal sur le bord de sa zone quand on le relâche à proximité.'],
+    shortcut:['Toggle all pets with the displayed keyboard shortcut.','표시된 단축키를 눌러 모든 펫을 숨기거나 다시 표시합니다.','表示されたキーで全ペットの表示を切り替えます。','使用所示快捷键显示或隐藏所有宠物。','使用顯示的快速鍵顯示或隱藏所有寵物。','Alterna la visibilidad con el atajo indicado.','Affiche ou masque les animaux avec le raccourci indiqué.'],
+    language:['Choose the interface language or follow your system language.','메뉴와 설정에 사용할 언어를 선택합니다. 시스템 언어를 선택하면 운영체제 설정을 따릅니다.','表示言語を選ぶかシステム言語に合わせます。','选择界面语言或跟随系统。','選擇介面語言或跟隨系統。','Elige el idioma de la interfaz o el del sistema.','Choisit la langue de l’interface ou celle du système.'],
+    multiPet:['Add companions to show up to four pets together.','동료 펫을 추가해 바탕 화면에 최대 네 마리까지 함께 표시합니다.','仲間を追加して最大4匹まで表示します。','可添加伙伴，同时显示最多四只宠物。','可新增夥伴，同時顯示最多四隻寵物。','Añade compañeros para mostrar hasta cuatro mascotas.','Ajoute des compagnons pour afficher jusqu’à quatre animaux.'],
+    interactions:['Nearby pets can greet, follow or chase each other.','가까이 있는 펫들이 서로 인사하거나 따라다니며 놉니다.','近くのペット同士で挨拶や追いかけっこをします。','附近的宠物可以问候或互相追逐。','附近的寵物可以打招呼或互相追逐。','Las mascotas cercanas pueden saludarse o perseguirse.','Les animaux proches peuvent se saluer ou se poursuivre.'],
+    personalities:['Set size, behaviour and cursor gaze separately for each companion.','동료 펫마다 크기, 행동 성향, 커서 바라보기를 따로 설정합니다.','仲間ごとにサイズ、行動、視線を設定します。','为每只伙伴分别设置大小、行为和视线。','為每隻夥伴分別設定大小、行為和視線。','Ajusta tamaño, conducta y mirada por mascota.','Règle la taille, le comportement et le regard de chaque compagnon.'],
+    roaming:['Choose a display or draw a rectangle to limit where pets can move.','모니터를 선택하거나 사각형을 그려 펫이 움직일 수 있는 범위를 제한합니다.','ディスプレイや矩形を選んで移動範囲を制限します。','选择显示器或画出矩形来限制宠物活动范围。','選擇顯示器或畫出矩形來限制寵物活動範圍。','Elige una pantalla o dibuja un rectángulo para limitar el paseo.','Choisissez un écran ou tracez un rectangle pour limiter les déplacements.'],
+    toys:['Throw a ball for pets to chase.','공을 던지면 펫이 공을 쫓아갑니다.','ボールを投げて遊べます。','扔球让宠物追逐。','丟球讓寵物追逐。','Lanza una pelota para que la persigan.','Lancez une balle que les animaux peuvent poursuivre.'],
+    petting:['Hold Shift and move the pointer side to side over a pet to stroke it.','Shift 키를 누른 채 펫 위에서 마우스를 좌우로 움직여 쓰다듬습니다.','Shiftを押しながら左右になでます。','按住 Shift 并左右移动指针以抚摸宠物。','按住 Shift 並左右移動指標以撫摸寵物。','Mantén Mayús y mueve el cursor de lado a lado para acariciar.','Maintenez Maj et déplacez le pointeur de côté pour caresser un animal.'],
+    routines:['Reduce automatic activity during quiet hours or after a period without input.','지정한 시간대이거나 일정 시간 입력이 없으면 펫의 자동 행동을 줄입니다.','指定時間帯や操作がないときに自動動作を抑えます。','在指定时段或闲置时减少自动动作。','在指定時段或閒置時減少自動動作。','Reduce la actividad automática durante el descanso o la inactividad.','Réduit les actions automatiques aux heures calmes ou après une période d’inactivité.'],
+    layouts:['Save and restore named groups of pets with their positions and preferences.','현재 배치에 이름을 붙여 저장합니다. 나중에 불러오면 펫 조합과 각 펫의 위치, 크기, 행동 성향이 복원됩니다.','ペットの組み合わせ、位置、設定を名前付きで保存・復元します。','按名称保存和恢复宠物组合、位置及偏好。','依名稱儲存和還原寵物組合、位置及偏好。','Guarda y recupera grupos de mascotas con sus posiciones y preferencias.','Enregistre et restaure des groupes d’animaux avec leurs positions et préférences.'],
+    libraryTools:['Search your collection, mark favourites and rename pets.','보유한 펫을 검색하거나 즐겨찾기에 추가하고 표시 이름을 바꿀 수 있습니다.','ペットを検索し、お気に入り登録や名前の変更ができます。','搜索宠物、标记收藏或更改名称。','搜尋寵物、加入收藏或更改名稱。','Busca mascotas, marca favoritas y cambia sus nombres.','Recherche, renomme et ajoute des animaux aux favoris.']
+  };
+  for(const [id,row] of Object.entries(tips))tipLocales.forEach((code,i)=>{messages[code]['tip-'+id]=row[i];});
   function resolveLocale(value) {
     const code=String(value||'en-GB').replaceAll('_','-').toLowerCase();
     if(code.startsWith('zh'))return /hant|tw|hk|mo/.test(code)?'zh-Hant':'zh-Hans';
     if(code.startsWith('ja'))return 'ja';
+    if(code==='ko'||code.startsWith('ko-'))return 'ko';
     if(code.startsWith('es'))return 'es';
     if(code.startsWith('fr'))return 'fr';
     return 'en-GB';

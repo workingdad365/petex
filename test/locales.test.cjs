@@ -10,6 +10,7 @@ test('every supported language covers all UI, dialog and validation messages',()
 test('locale matching separates simplified and traditional Chinese and defaults to UK English',()=>{
   for(const value of ['zh-TW','zh-HK','zh-Hant-TW'])assert.equal(resolveLocale(value),'zh-Hant');
   for(const value of ['zh-CN','zh-SG','zh-Hans'])assert.equal(resolveLocale(value),'zh-Hans');
+  for(const value of ['ko','ko-KR','ko_KR'])assert.equal(resolveLocale(value),'ko');
   assert.equal(resolveLocale('es-MX'),'es');assert.equal(resolveLocale('fr-CA'),'fr');assert.equal(resolveLocale('en-US'),'en-GB');
 });
 test('errors and placeholders use the selected language without disclosing filesystem details',()=>{

@@ -17,7 +17,7 @@ app.setName('Petex');
 protocol.registerSchemesAsPrivileged([{scheme: 'pet-asset', privileges: {standard: true, secure: true, supportFetchAPI: true, corsEnabled: true}}]);
 const locked = app.requestSingleInstanceLock();
 if (!locked) app.quit();
-let library, settings, pets = [], petWindow, settingsWindow, areaWindow, desktop, tray, quitting = false;
+let library, settings, pets = [], settingsWindow, areaWindow, desktop, tray, quitting = false;
 let queue = Promise.resolve();
 let screenAwake=true, fullscreenHidden=false, fullscreenMonitor, fullscreenTimer=null, shortcutAvailable=false, shortcutEnabled=null,activityReady=false,fullscreenQuery=null,fullscreenIndex=0;
 const fullscreenDisplays=new Set();
@@ -142,7 +142,7 @@ async function exportLibrary(kind) {
   if(id&&pet.builtin)throw new Error(t('builtinExport'));
   const name=id?pet.displayName:'Petex-library';
   const fileName=name.replace(/[<>:"/\\|?*\x00-\x1f]/g,'-').replace(/[. ]+$/,'').slice(0,70)||'Petex-pet';
-  const result=await dialog.showSaveDialog(settingsWindow||petWindow,{title:t(id?'exportTitle':'backupTitle',{name:pet.displayName}),defaultPath:fileName+'.zip',filters:[{name:t('zipFiles'),extensions:['zip']}]});
+  const result=await dialog.showSaveDialog(settingsWindow||desktop.primary.win,{title:t(id?'exportTitle':'backupTitle',{name:pet.displayName}),defaultPath:fileName+'.zip',filters:[{name:t('zipFiles'),extensions:['zip']}]});
   if(result.canceled||!result.filePath)return false;
   const actualParent=await fs.realpath(path.dirname(result.filePath));
   const actualLibrary=await fs.realpath(library.petsPath);
@@ -233,6 +233,7 @@ function configureIPC() {
     applySettings(); await library.saveSettings(settings); return true;
   }));
   handler('pet:home', settingsOnly, () => enqueue(async () => {settings.visible = true; resetPosition(); applySettings(); await library.saveSettings(settings);}));
+  handler('pet:refresh',settingsOnly,()=>enqueue(()=>desktop.recreateWindows()));
   handler('pet:play', settingsOnly, name => {
     const valid = selectedPet().builtin ? ['waving','jumping','running-left','running-right'] : ['waving','jumping','failed','waiting','running','review','running-left','running-right'];
     if (!valid.includes(name)) throw new Error('Unsupported animation.');
@@ -284,7 +285,7 @@ function configureIPC() {
 async function showAreaPicker(){
   if(!settings.features.roaming)return;
   if(areaWindow&&!areaWindow.isDestroyed()){areaWindow.focus();return;}
-  const display=screen.getAllDisplays().find(d=>String(d.id)===settings.roamArea?.displayId)||screen.getDisplayMatching(petWindow.getBounds());
+  const display=screen.getAllDisplays().find(d=>String(d.id)===settings.roamArea?.displayId)||screen.getDisplayMatching(desktop.primary.win.getBounds());
   const win=areaWindow=new BrowserWindow({...display.workArea,frame:false,transparent:true,hasShadow:false,resizable:false,skipTaskbar:true,alwaysOnTop:true,show:false,webPreferences:windowOptions()});secure(win);
   win.on('closed',()=>{if(areaWindow===win)areaWindow=null;});
   try{await win.loadFile(rendererPath('area.html'),{query:{displayId:String(display.id)}});}catch(error){if(win.isDestroyed())return;throw error;}
@@ -301,7 +302,7 @@ if (locked) app.whenReady().then(async () => {
   fullscreenMonitor.on('change',({fullscreen,locked})=>{
     const changed=!activityReady||fullscreenDisplays.has(fullscreenQuery)!==fullscreen;activityReady=true;
     if(fullscreen)fullscreenDisplays.add(fullscreenQuery);else fullscreenDisplays.delete(fullscreenQuery);
-    fullscreenHidden=desktop?fullscreenDisplays.has(String(screen.getDisplayMatching(petWindow.getBounds()).id)):false;
+    fullscreenHidden=desktop?fullscreenDisplays.has(String(screen.getDisplayMatching(desktop.primary.win.getBounds()).id)):false;
     if(locked)screenAwake=false;if(!settings.hideFullscreen||locked||!fullscreenMonitor.available)configureFullscreen();
     if(changed||locked||!fullscreenMonitor.available)refreshActivity();
   });
@@ -327,7 +328,7 @@ if (locked) app.whenReady().then(async () => {
     } catch { return new Response('Not found', {status: 404}); }
   });
   desktop=new DesktopPets({getState:()=>({settings,pets,screenAwake,fullscreenDisplays}),secure,windowOptions,onChange:broadcast,onSave:()=>enqueue(()=>library.saveSettings(settings))});
-  petWindow=desktop.primary.win;configureIPC();await desktop.primary.ready;applySettings();
+  configureIPC();await desktop.primary.ready;applySettings();
   function trayIcon() {
     const file = process.platform === 'darwin' ? 'trayTemplate.png' : nativeTheme.shouldUseDarkColorsForSystemIntegratedUI ? 'trayLight.png' : 'tray.png';
     const icon = nativeImage.createFromPath(path.join(__dirname, 'assets', file));

@@ -8,6 +8,11 @@ function localize() {
  for(const node of document.querySelectorAll('[data-i18n]'))node.textContent=t(node.dataset.i18n);
  for(const node of document.querySelectorAll('[data-i18n-aria]'))node.setAttribute('aria-label',t(node.dataset.i18nAria));
  for(const node of document.querySelectorAll('[data-i18n-title]'))node.title=t(node.dataset.i18nTitle);
+ for(const control of document.querySelectorAll('.preferences-grid input, .preferences-grid select, #refresh-pets')){
+   const description=t('tip-'+control.id.replace(/^feature-/,''));
+   (control.closest('.setting')||control).title=description;
+   control.setAttribute('aria-description',description);
+ }
  for(const node of document.querySelectorAll('[data-i18n-placeholder]'))node.placeholder=t(node.dataset.i18nPlaceholder);
  $('language').replaceChildren(...Object.entries({auto:t('automatic'),...languages}).map(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;return option;}));
 }
@@ -100,6 +105,10 @@ for(const key of ['alwaysOnTop','motion','followCursor','launchAtLogin','visible
 $('size').addEventListener('input',()=>{const size=Number($('size').value);$('size-description').textContent=`${size} px`;});
 $('size').addEventListener('change',()=>update({size:Number($('size').value)}));
 $('home').onclick=async()=>{if(await run(async()=>{await api.home();return true;}))toast(t('resetDone'));};
+$('refresh-pets').onclick=async event=>{
+  const button=event.currentTarget;button.disabled=true;
+  try{await run(()=>api.refreshPets());}finally{button.disabled=false;}
+};
 $('github').onclick=event=>{event.preventDefault();run(()=>api.openRepository());};
 $('open-folder').onclick=()=>run(()=>api.openPetsFolder());
 $('done').onclick=()=>run(()=>api.closeSettings());
