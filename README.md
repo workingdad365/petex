@@ -81,12 +81,15 @@ All of this runs locally. No accounts, telemetry, network services or additional
 npm run check
 npm run test:desktop
 npm run pack
-npm run dist:mac
 npm run dist:win
 npm run test:packaged
 ```
 
-Builds land in `release/`. Build the macOS DMG / ZIP on macOS; build the Windows NSIS installer on Windows. The [Desktop packages workflow](https://github.com/iebb/petex/actions/workflows/build.yml) runs on pushes to `master`, pull requests, version tags, or manual dispatch. It builds macOS Apple Silicon, macOS Intel, and Windows x64 on native runners. Each job runs unit and desktop tests, builds installers, verifies packaged source and native libraries, then runs the desktop tests against the packaged executable. Installers are available in the workflow run’s artifacts. After all three jobs pass, pushes to master publish a GitHub Release with all five installers and SHA256SUMS.txt. Versions use major.minor.commit-height: edit the first two numbers in package.json manually; CI replaces the third with `git rev-list --count HEAD` using full history. Run `npm run version:ci` for the same version locally. Existing published versions are left unchanged. Version tags must match the computed version. The macOS bundle identifier is `ad.neko.petex`.
+This fork publishes Windows x64 installers on [GitHub Releases](https://github.com/workingdad365/petex/releases/latest). A local `npm run dist:win` build writes the NSIS installer to `release/`.
+
+The [Windows x64 release workflow](https://github.com/workingdad365/petex/actions/workflows/build.yml) runs on pushes to `master`, version tags, pull requests and manual dispatch. It runs the unit and desktop tests, builds the installer, verifies the packaged source and native libraries, and runs the desktop tests against the packaged executable. Successful pushes to `master` or a matching version tag publish the `.exe` and `SHA256SUMS.txt`.
+
+Versions use major.minor.commit-height: edit the first two numbers in package.json manually; CI replaces the third with `git rev-list --count HEAD` using full history. Run `npm run version:ci` for the same version locally. Existing published versions are left unchanged.
 
 Release signing is optional in CI. Downloads remain unsigned until signing credentials are configured. No in-app updater is configured.
 

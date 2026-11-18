@@ -1,7 +1,7 @@
 const fs=require('node:fs');const path=require('node:path');const crypto=require('node:crypto');const {execFileSync,spawnSync}=require('node:child_process');
 const version=require('../package.json').version,tag=`v${version}`;
 if(process.env.RELEASE_REF?.startsWith('refs/tags/')&&process.env.RELEASE_REF!==`refs/tags/${tag}`)throw new Error('Tag must match package.json version.');
-const expected=[`Petex-${version}-mac-arm64.dmg`,`Petex-${version}-mac-arm64.zip`,`Petex-${version}-mac-x64.dmg`,`Petex-${version}-mac-x64.zip`,`Petex-${version}-win-x64.exe`];
+const expected=[`Petex-${version}-win-x64.exe`];
 for(const name of expected)if(!fs.existsSync(path.join('release',name)))throw new Error(`Missing installer: ${name}`);
 const existing=spawnSync('gh',['release','view',tag,'--json','isDraft'],{encoding:'utf8'});
 if(existing.status===0&&!JSON.parse(existing.stdout).isDraft){console.log(`${tag} is already published. Bump package.json to release a new version.`);process.exit(0);}
