@@ -36,11 +36,11 @@ class DesktopPets {
     p.ready=p.win.loadFile(path.join(__dirname,'renderer','pet.html')).then(()=>{if(!this.disposed&&!p.win.isDestroyed()){p.loaded=true;this.place(p);this.refresh();}});
     return p;
   }
-  area(p) {
-    const {settings}=this.getState(),bounds=p.win.getBounds();
+  area(p,targetDisplay=screen.getDisplayMatching(p.win.getBounds())) {
+    const {settings}=this.getState();
     const zone=settings.features.roaming?settings.roamArea:null;
     const display=zone?screen.getAllDisplays().find(d=>String(d.id)===zone.displayId):null;
-    const work=(display||screen.getDisplayMatching(bounds)).workArea;
+    const work=(display||targetDisplay).workArea;
     if(!zone?.rect||!display)return work;
     const r=zone.rect,config=this.config(p),width=Math.min(work.width,Math.max(config.size+32,Math.round(work.width*r.width))),height=Math.min(work.height,Math.max(Math.ceil(config.size*208/192)+32,Math.round(work.height*r.height)));
     return {x:Math.min(Math.round(work.x+work.width*r.x),work.x+work.width-width),y:Math.min(Math.round(work.y+work.height*r.y),work.y+work.height-height),width,height};
@@ -51,7 +51,8 @@ class DesktopPets {
     const anchor=settings.placements[p.id];
     if((reflow||!position)&&anchor){const display=screen.getAllDisplays().find(d=>String(d.id)===anchor.displayId)||screen.getPrimaryDisplay();position={x:display.workArea.x+anchor.x*(display.workArea.width-width),y:display.workArea.y+anchor.y*(display.workArea.height-height)};}
     if(!position){const area=screen.getPrimaryDisplay().workArea;const offset=[...this.instances.keys()].indexOf(p.id);position={x:area.x+area.width-width-64-offset*(width+16),y:area.y+area.height-height-24};}
-    p.win.setBounds({...clamp({...position,width,height},this.area(p)),width,height});
+    const bounds={x:Math.round(position.x),y:Math.round(position.y),width,height};
+    p.win.setBounds({...clamp(bounds,this.area(p,screen.getDisplayMatching(bounds))),width,height});
     p.win.setAlwaysOnTop(config.alwaysOnTop,'floating');
     if(process.platform==='darwin')p.win.setVisibleOnAllWorkspaces(true,{visibleOnFullScreen:true});
     this.remember(p,false);
@@ -108,7 +109,7 @@ class DesktopPets {
     for(const p of this.instances.values()){
       if(!this.active(p))continue;
       let movement=null;
-      if(p.drag){movement=p.drag.update(cursor,now);if(movement.dragging){const bounds=p.win.getBounds(),pos=clamp({...bounds,...movement.position},this.area(p));p.win.setPosition(pos.x,pos.y);}}
+      if(p.drag){movement=p.drag.update(cursor,now);if(movement.dragging){const bounds=p.win.getBounds(),pos=clamp({...bounds,...movement.position},this.area(p,screen.getDisplayNearestPoint(cursor)));p.win.setPosition(pos.x,pos.y);}}
       if(p.walking){
         const w=p.walking,progress=Math.min(1,(now-w.started)/w.duration),eased=progress*progress*(3-2*progress),bounds=p.win.getBounds();
         const candidate={x:Math.round(w.origin.x+(w.target.x-w.origin.x)*eased),y:Math.round(w.origin.y+(w.target.y-w.origin.y)*eased)};
@@ -151,6 +152,18 @@ class DesktopPets {
   pressEnd(p) {
     if(p.drag){const wasDragging=p.drag.dragging;p.drag=null;const bounds=p.win.getBounds();const position=wasDragging&&this.getState().settings.snapEdges?snapPosition(bounds,this.area(p)):clamp(bounds,this.area(p));p.win.setPosition(position.x,position.y);this.remember(p);}
     p.busyUntil=performance.now()+3000;this.refresh();this.onSave();
+  }
+  moveToDisplay(p,displayId) {
+    if(this.disposed||!p||p.win.isDestroyed()||this.instances.get(p.id)!==p)return false;
+    const {settings}=this.getState(),displays=screen.getAllDisplays(),display=displays.find(d=>String(d.id)===displayId);
+    if(!display)return false;
+    const restricted=settings.features.roaming&&displays.find(d=>String(d.id)===settings.roamArea?.displayId);
+    if(restricted&&restricted.id!==display.id)return false;
+    this.cancelSocial();p.walking=null;p.drag=null;
+    const bounds=p.win.getBounds(),from=screen.getDisplayMatching(bounds).workArea,area=this.area(p,display);
+    const position=clamp({...bounds,x:area.x+(bounds.x-from.x)/Math.max(1,from.width-bounds.width)*Math.max(0,area.width-bounds.width),y:area.y+(bounds.y-from.y)/Math.max(1,from.height-bounds.height)*Math.max(0,area.height-bounds.height)},area);
+    p.win.setPosition(position.x,position.y);p.lastCursor=null;p.busyUntil=performance.now()+3000;
+    this.remember(p);this.refresh();this.onSave();return true;
   }
   hit(p,value){if(!p.drag)p.win.setIgnoreMouseEvents(value!==true,{forward:true});}
   hide(p) {const {settings}=this.getState();if(p.id==='primary'){if(settings.features.multiPet)settings.primaryVisible=false;else settings.visible=false;}else{const item=settings.companions.find(c=>c.id===p.id);if(item)item.visible=false;}this.refresh();this.onSave();}

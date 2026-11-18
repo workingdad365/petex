@@ -121,11 +121,14 @@ function updateTray() {
 }
 function petMenu(p=desktop.primary) {
   desktop.cancelSocial();p.walking=null;desktop.schedule();
+  const displays=screen.getAllDisplays(),current=screen.getDisplayMatching(p.win.getBounds());
+  const restricted=settings.features.roaming&&displays.some(d=>String(d.id)===settings.roamArea?.displayId);
   Menu.buildFromTemplate([
     {label:t('wave'),click:()=>desktop.action(p,'waving')},
     {label:t('jump'),click:()=>desktop.action(p,'jumping')},
     ...(settings.features.toys?[{label:t('throwBall'),enabled:settings.motion,click:()=>desktop.throwBall()}]:[]),
     {type:'separator'},
+    ...(displays.length>1?[{label:t('moveToDisplay'),enabled:!restricted,submenu:displays.map((d,i)=>({label:t('displayNumber',{number:i+1})+(d.label?' - '+d.label:''),type:'radio',checked:d.id===current.id,enabled:d.id!==current.id,click:()=>desktop.moveToDisplay(p,String(d.id))}))}]:[]),
     {label:t('settings'),click:showSettings},
     {label:t('hidePet'),click:()=>desktop.hide(p)},
     {type:'separator'},

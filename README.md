@@ -49,6 +49,8 @@ Pet size (48–240 px), always on top, animations, cursor gaze, launch at login,
 
 **Snap to edges** gently snaps a released drag near a display edge. **Hide in fullscreen** temporarily hides the pet while another app fills its display. The pet returns when fullscreen ends, preserving your show / hide preference. **⌘⇧P** on macOS or **Ctrl+Shift+P** on Windows toggles visibility globally; turn the shortcut off if you prefer. Settings reports if another app already uses it. **Reset position** restores a misplaced pet to the primary display. Positions stay within a connected display’s work area.
 
+Drag a pet to another monitor to move it between displays, or right-click it and choose **Move to display**. The menu marks the current display and moves only the selected pet, keeping its relative position on the destination display. Saved positions restore on that display. If **Roaming area** is pinned to a connected display or a drawn region, turn it off under **More** to allow moves between displays.
+
 Settings, menus, dialogs, and errors support English (UK), Simplified Chinese, Traditional Chinese, Japanese, Spanish, and French. The language follows the system by default and can be changed in settings. Switch pets directly in the tray’s **Choose pet** menu.
 
 **Export pet** saves a Codex-compatible ZIP with its manifest and artwork. **Back up library** saves all imported pets in one ZIP; restore it with **import a file**. Identical artwork is deduplicated on restore. Backups contain pet artwork and metadata; Miso is included with the app. Library backups support up to 100 pets and 256 MB. Export individual pets for larger collections.

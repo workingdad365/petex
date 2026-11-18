@@ -166,6 +166,82 @@ test('native drag follows movement, keeps its facing when stopped, and cancels l
   await expect.poll(async()=>JSON.parse(await fs.readFile(path.join(root,'data','settings.json'),'utf8')).position).toEqual({x:dragOrigin.x-80,y:dragOrigin.y-140});
 });
 
+async function prepareDisplayTest(){
+  await settingsPage.evaluate(()=>window.pedex.updateSettings({randomAnimations:false,followCursor:false}));
+  const displays=await application.evaluate(({screen,Menu})=>{
+    // Two logical displays inside a real work area keep native-window tests portable.
+    const original=screen.getPrimaryDisplay(),area=original.workArea,width=Math.floor(area.width/2);
+    globalThis.testDisplays=[
+      {...original,id:101,label:'Left test display',workArea:{...area,width}},
+      {...original,id:102,label:'Right test display',workArea:{...area,x:area.x+width,width:area.width-width}},
+    ].map(d=>({...d,bounds:{...d.workArea}}));
+    screen.getAllDisplays=()=>globalThis.testDisplays;
+    screen.getPrimaryDisplay=()=>globalThis.testDisplays[0];
+    screen.getDisplayNearestPoint=point=>globalThis.testDisplays.find(d=>point.x>=d.bounds.x&&point.x<d.bounds.x+d.bounds.width)||globalThis.testDisplays[0];
+    screen.getDisplayMatching=bounds=>screen.getDisplayNearestPoint({x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2});
+    Menu.prototype.popup=function(){globalThis.testPetMenu=this;};
+    screen.emit('display-metrics-changed',{},screen.getPrimaryDisplay(),['bounds']);
+    return globalThis.testDisplays;
+  });
+  await settingsPage.evaluate(()=>window.pedex.home());
+  dragOrigin=await application.evaluate(({screen,BrowserWindow})=>{
+    const origin=BrowserWindow.getAllWindows().find(w=>w.getTitle()==='Petex pet').getBounds();
+    globalThis.testCursor={x:origin.x+96,y:origin.y+90};screen.getCursorScreenPoint=()=>({...globalThis.testCursor});return origin;
+  });
+  return displays;
+}
+
+test('native dragging crosses displays, saves the destination and reset returns to primary',async()=>{
+  const displays=await prepareDisplayTest(),destination=displays[1].workArea;
+  await petPage.evaluate(()=>window.pedex.pressStart());
+  await application.evaluate((_electron,x)=>{globalThis.testCursor.x=x;},destination.x+1);
+  await expect.poll(()=>application.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().find(w=>w.getTitle()==='Petex pet').getBounds().x)).toBe(destination.x);
+  await petPage.evaluate(()=>window.pedex.pressEnd());
+  await expect.poll(async()=>JSON.parse(await fs.readFile(path.join(root,'data','settings.json'),'utf8')).placements?.primary?.displayId).toBe('102');
+  await settingsPage.evaluate(()=>window.pedex.updateSettings({size:144}));
+  let state=await settingsPage.evaluate(()=>window.pedex.getState());
+  expect(state.instances[0].bounds.x).toBe(destination.x);
+  await settingsPage.evaluate(()=>window.pedex.home());
+  state=await settingsPage.evaluate(()=>window.pedex.getState());
+  const b=state.instances[0].bounds;
+  expect(b.x).toBeGreaterThanOrEqual(displays[0].workArea.x);expect(b.x+b.width).toBeLessThanOrEqual(destination.x);
+});
+
+test('right-click display menu marks the current monitor and moves only the chosen pet',async()=>{
+  const displays=await prepareDisplayTest();
+  await extras({multiPet:true});await addMiso();
+  await expect.poll(()=>application.windows().filter(p=>p.url().endsWith('pet.html')).length).toBe(2);
+  const extra=application.windows().filter(p=>p.url().endsWith('pet.html')).find(p=>p!==petPage);
+  const id=(await extra.evaluate(()=>window.pedex.getState())).instanceId,original=(await readState()).instances.find(p=>p.id==='primary').bounds;
+  await extra.locator('canvas').dispatchEvent('contextmenu',{button:2});
+  await expect.poll(()=>application.evaluate(()=>globalThis.testPetMenu?.items.find(i=>i.label==='Move to display')?.submenu.items.map(i=>({label:i.label,checked:i.checked,enabled:i.enabled})))).toEqual([
+    {label:'Display 1 - Left test display',checked:true,enabled:false},
+    {label:'Display 2 - Right test display',checked:false,enabled:true},
+  ]);
+  await application.evaluate(()=>globalThis.testPetMenu.items.find(i=>i.label==='Move to display').submenu.items[1].click());
+  await expect.poll(async()=>(await readState()).settings.placements[id]?.displayId).toBe('102');
+  const state=await readState(),b=state.instances.find(p=>p.id===id).bounds,a=displays[1].workArea;
+  expect(b.x).toBeGreaterThanOrEqual(a.x);expect(b.x+b.width).toBeLessThanOrEqual(a.x+a.width);
+  expect(state.instances.find(p=>p.id==='primary').bounds).toEqual(original);
+  await expect.poll(async()=>JSON.parse(await fs.readFile(path.join(root,'data','settings.json'),'utf8')).placements?.[id]?.displayId).toBe('102');
+  await extra.evaluate(()=>window.pedex.menu());
+  expect(await application.evaluate(()=>globalThis.testPetMenu.items.find(i=>i.label==='Move to display').submenu.items.map(i=>i.checked))).toEqual([false,true]);
+});
+
+test('display menus respect roaming limits and ignore disconnected destinations',async()=>{
+  await prepareDisplayTest();
+  await settingsPage.evaluate(()=>window.pedex.updateSettings({features:{roaming:true},roamArea:{displayId:'101',rect:null}}));
+  await petPage.evaluate(()=>window.pedex.menu());
+  expect(await application.evaluate(()=>globalThis.testPetMenu.items.find(i=>i.label==='Move to display').enabled)).toBe(false);
+  await extras({});
+  await petPage.evaluate(()=>window.pedex.menu());
+  const original=(await readState()).instances[0].bounds;
+  await application.evaluate(()=>{globalThis.testDisplays.pop();globalThis.testPetMenu.items.find(i=>i.label==='Move to display').submenu.items[1].click();});
+  expect((await readState()).instances[0].bounds).toEqual(original);
+  await petPage.evaluate(()=>window.pedex.menu());
+  expect(await application.evaluate(()=>globalThis.testPetMenu.items.some(i=>i.label==='Move to display'))).toBe(false);
+});
+
 test('supports 48 px pets and persists the smaller size',async()=>{
   await settingsPage.locator('#size').focus();
   await settingsPage.locator('#size').press('Home');
