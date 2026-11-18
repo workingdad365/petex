@@ -32,6 +32,7 @@ function displaysChanged(){
   if(workAreaOnly)desktop.constrain();else applySettings(true);
 }
 const SHORTCUT='CommandOrControl+Shift+P';
+const loginItemOptions=process.platform==='win32'?{args:['--hidden']}:{};
 const locale=()=>resolveLocale(settings?.language==='auto'?app.getLocale():settings?.language);
 const t=(key,values)=>translate(locale(),key,values);
 const errorText=error=>localizeError(locale(),error);
@@ -171,8 +172,8 @@ function configureIPC() {
     const next = normalizeSettings({...settings, ...clean});
     if (next.launchAtLogin !== settings.launchAtLogin) {
       if (!snapshot().loginAvailable) throw new Error('Launch at login is available in the installed app.');
-      app.setLoginItemSettings({openAtLogin: next.launchAtLogin, ...(process.platform === 'win32' ? {args: ['--hidden']} : {})});
-      next.launchAtLogin = app.getLoginItemSettings().openAtLogin;
+      app.setLoginItemSettings({...loginItemOptions,openAtLogin: next.launchAtLogin});
+      next.launchAtLogin = app.getLoginItemSettings(loginItemOptions).openAtLogin;
     }
     settings=next;await reloadPets();
     applySettings(); await library.saveSettings(settings); return snapshot();
@@ -312,7 +313,7 @@ if (locked) app.whenReady().then(async () => {
   powerMonitor.on('resume',()=>awake(powerMonitor.getSystemIdleState(60)!=='locked'));powerMonitor.on('unlock-screen',()=>awake(true));
   screenAwake=powerMonitor.getSystemIdleState(60)!=='locked';
   if (!pets.some(p => p.id === settings.petId)) settings.petId = 'miso';
-  if (snapshot().loginAvailable) settings.launchAtLogin = app.getLoginItemSettings().openAtLogin;
+  if (snapshot().loginAvailable) settings.launchAtLogin = app.getLoginItemSettings(loginItemOptions).openAtLogin;
   protocol.handle('pet-asset', async request => {
     const url = new URL(request.url);
     const match = /^\/([a-f0-9-]{36})\/(spritesheet\.(?:png|webp))$/.exec(url.pathname);
