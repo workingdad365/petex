@@ -1,6 +1,6 @@
 # Petex
 
-A standalone macOS and Windows pet app with no chat, coding tools, accounts, or network services.
+A standalone macOS and Windows pet app with no chat, coding tools or accounts. Desktop pets work offline.
 
 Petex lives in the menu bar / system tray. Its transparent companion window floats on the desktop. Click your pet to wave, hold for 550 ms to jump, drag to move, and right-click for its menu. Movement beyond 6 pixels starts a drag and cancels the long press. During dragging, v2 pets look in the movement direction using all 16 gaze poses; v1 pets use their left/right movement rows. Position updates run approximately every 16 ms while pressed, and direction filtering prevents flickering when slowing or stopping. Close settings with **Done** to leave your pet hanging out. Quit from the tray when you're finished.
 
@@ -87,7 +87,9 @@ npm run test:packaged
 
 This fork publishes Windows x64 and Apple Silicon (macOS arm64) packages on [GitHub Releases](https://github.com/workingdad365/petex/releases/latest). Build locally with `npm run dist:win` on Windows or `npm run dist:mac -- --arm64` on an Apple Silicon Mac.
 
-The [release workflow](https://github.com/workingdad365/petex/actions/workflows/build.yml) tests both platforms before and after packaging. Successful pushes to `master` or a matching version tag publish the Windows `.exe`, macOS arm64 `.dmg` and `.zip`, and `SHA256SUMS.txt`.
+The installed GitHub edition checks for a newer stable release at startup and every six hours. Choose **Download and install** to download the matching Windows `.exe` or Apple Silicon `.pkg`. Petex verifies the download, opens the system installer and quits so installation can proceed. Follow the installer prompts to finish.
+
+The [release workflow](https://github.com/workingdad365/petex/actions/workflows/build.yml) tests both platforms before and after packaging. Releases include the Windows `.exe`, macOS arm64 `.dmg`, `.zip` and `.pkg`, and `SHA256SUMS.txt`.
 
 Versions use major.minor.commit-height: edit the first two numbers in package.json manually; CI replaces the third with `git rev-list --count HEAD` using full history. Run `npm run version:ci` for the same version locally. Existing published versions are left unchanged.
 

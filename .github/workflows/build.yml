@@ -60,6 +60,9 @@ jobs:
         run: npm run dist:${{ matrix.target }} -- --${{ matrix.arch }}
       - name: Verify and test the packaged app
         run: npm run test:packaged -- ${{ matrix.platform }} ${{ matrix.arch }}
+      - name: Build Apple Silicon update installer
+        if: matrix.platform == 'darwin'
+        run: pkgbuild --component release/mac-arm64/Petex.app --install-location /Applications --identifier ad.neko.petex --version "$(node -p 'require("./package.json").version')" "release/Petex-$(node -p 'require("./package.json").version')-mac-arm64.pkg"
       - name: Upload installers
         uses: actions/upload-artifact@v4
         with:
@@ -67,6 +70,7 @@ jobs:
           path: |
             release/*.dmg
             release/*.zip
+            release/*.pkg
             release/*.exe
           if-no-files-found: error
           retention-days: 14

@@ -6,6 +6,7 @@ const { pathToFileURL } = require('node:url');
 const { Library, normalizeSettings } = require('./library.cjs');
 const {findArchive, readBuiltins} = require('./codex-builtins.cjs');
 const {DesktopPets}=require('./desktop.cjs');
+const {repository,startUpdates}=require('./updates.cjs');
 const {MAX_PETS,newCompanion}=require('./preferences.cjs');
 const {FullscreenMonitor} = require('./fullscreen.cjs');
 const {resolveLocale,translate,localizeError} = require('./locales.js');
@@ -243,7 +244,7 @@ function configureIPC() {
   handler('pets:export', settingsOnly, exportLibrary);
   handler('pet:wander',petWindows,function(name,duration){desktop.wander(desktop.fromWindow(this),name,duration);});
   handler('settings:close',settingsOnly,()=>settingsWindow.close());
-  handler('repository:open',settingsOnly,()=>shell.openExternal('https://github.com/iebb/petex'));
+  handler('repository:open',settingsOnly,()=>shell.openExternal(repository));
   handler('pets:open-folder',settingsOnly,async()=>{const error=await shell.openPath(library.petsPath);if(error)throw new Error(error);});
   handler('pet:menu',petWindows,function(){petMenu(desktop.fromWindow(this));});
   handler('pet:press-start',petWindows,function(){desktop.pressStart(desktop.fromWindow(this));});
@@ -349,4 +350,5 @@ if (locked) app.whenReady().then(async () => {
   screen.on('display-added',displaysChanged);
   screen.on('display-metrics-changed',displaysChanged);
   if (!process.argv.includes('--hidden') && !app.getLoginItemSettings().wasOpenedAtLogin) showSettings();
+  startUpdates({app,dialog,shell,net,t});
 }).catch(error => {dialog.showErrorBox(t('startError'),errorText(error)); app.quit();});

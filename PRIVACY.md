@@ -4,7 +4,7 @@ Petex does not collect, transmit, or sell personal data. It has no accounts, ana
 
 Pet artwork and settings stay on your device. Importing a pet copies the selected image into the app's local library. Importing built-in pets reads only compatible sprite images from an application you select or have installed. Deleting a pet removes the app's copy and does not change the original source.
 
-The GitHub button opens the project website in your browser, where GitHub's privacy policy applies. Opening the local pets folder uses Finder or File Explorer.
+The installed GitHub edition contacts GitHub at startup and every six hours to check the latest public release. If you choose to install it, Petex downloads the installer from GitHub and checks its SHA-256 digest. No pet data or settings are included in these requests. The GitHub button opens the project website in your browser, where GitHub's privacy policy applies. Opening the local pets folder uses Finder or File Explorer.
 
 Questions or support: https://github.com/iebb/petex/issues
 

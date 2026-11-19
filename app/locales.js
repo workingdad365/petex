@@ -1129,6 +1129,13 @@
   const languages = {'en-GB':'English (UK)', 'zh-Hans':'简体中文', 'zh-Hant':'繁體中文', ja:'日本語', ko:'한국어', es:'Español', fr:'Français'};
   // Each row describes one setting in the named locale order.
   const tipLocales=['en-GB','ko','ja','zh-Hans','zh-Hant','es','fr'];
+  const updateMessages={
+    updateAvailable:['Petex {version} is available.','Petex {version} 버전을 사용할 수 있습니다.','Petex {version} を利用できます。','Petex {version} 已发布。','Petex {version} 已推出。','Petex {version} está disponible.','Petex {version} est disponible.'],
+    updateInstall:['Download and install','다운로드 및 설치','ダウンロードしてインストール','下载并安装','下載並安裝','Descargar e instalar','Télécharger et installer'],
+    updateLater:['Later','나중에','後で','稍后','稍後','Más tarde','Plus tard'],
+    updateFailed:['Could not download, verify or open the installer.','설치 파일을 다운로드하거나 검증하거나 열지 못했습니다.','インストーラーを取得、検証、または起動できませんでした。','无法下载、验证或打开安装程序。','無法下載、驗證或開啟安裝程式。','No se pudo descargar, verificar o abrir el instalador.','Impossible de télécharger, vérifier ou ouvrir le programme d’installation.']
+  };
+  for(const [key,row] of Object.entries(updateMessages))tipLocales.forEach((code,i)=>{messages[code][key]=row[i];});
   const tips={
     size:['Change the size of the desktop pet.','바탕 화면에 표시되는 펫의 크기를 조절합니다.','ペットの表示サイズを変えます。','调整桌面宠物的大小。','調整桌面寵物的大小。','Cambia el tamaño de la mascota.','Ajuste la taille de l’animal.'],
     alwaysOnTop:['Keep pets above other windows.','다른 창을 열어도 펫이 그 위에 보입니다.','他のウィンドウの手前に表示します。','让宠物显示在其他窗口上方。','讓寵物顯示在其他視窗上方。','Muestra las mascotas sobre otras ventanas.','Garde les animaux devant les autres fenêtres.'],

@@ -268,7 +268,7 @@ test('supports 48 px pets and persists the smaller size',async()=>{
 test('GitHub link opens the project repository in the external browser',async()=>{
   await application.evaluate(({shell})=>{shell.openExternal=async url=>{globalThis.openedRepository=url;};});
   await settingsPage.getByRole('link',{name:'GitHub',exact:true}).click();
-  await expect.poll(()=>application.evaluate(()=>globalThis.openedRepository)).toBe('https://github.com/iebb/petex');
+  await expect.poll(()=>application.evaluate(()=>globalThis.openedRepository)).toBe('https://github.com/workingdad365/petex');
 });
 
 
